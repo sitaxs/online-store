@@ -113,7 +113,12 @@ void addProduct(vector<Products>& db) {
 	cout << "Назва товару: ";
 	cin.ignore((numeric_limits<streamsize>::max)(), '\n'); // прибираємо Enter після попереднього вводу
 	getline(cin, newProduct.name); // getline, щоб назва могла бути з пробілами
-
+	// BR03: назва не може бути порожньою або складатися лише з пробілів
+	while (newProduct.name.find_first_not_of(" \t") == string::npos) {
+		cout << "Назва не може бути порожньою" << endl;
+		cout << "Назва товару: ";
+		getline(cin, newProduct.name);
+	}
 	// перевірка, щоб ціна була числом більше 0
 	bool isError = false;
 	do {
