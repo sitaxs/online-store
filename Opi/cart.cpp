@@ -282,6 +282,7 @@ void makeOrder(vector<Cart>& dbCart, vector<Order>& dbOrder, vector<Products>& d
 	}
 
 	double total = 0;
+	int createdCount = 0;
 	cout << "Зміни на складі:" << endl;
 	for (const Cart& c : dbCart) {
 		if (c.idUser != idUser) {
@@ -291,6 +292,15 @@ void makeOrder(vector<Cart>& dbCart, vector<Order>& dbOrder, vector<Products>& d
 		if (index == -1) {
 			continue;
 		}
+
+		// BR02: перевіряємо наявність і списуємо товар зі складу
+		if (c.quantity > db[index].quantity) {
+			cout << db[index].name << ": недостатньо на складі (є " << db[index].quantity << ")" << endl;
+			continue;
+		}
+		cout << db[index].name << ": було " << db[index].quantity;
+		db[index].quantity -= c.quantity;
+		cout << " -> стало " << db[index].quantity << endl;
 
 		Order newOrder;
 		if (dbOrder.empty()) {
@@ -304,15 +314,23 @@ void makeOrder(vector<Cart>& dbCart, vector<Order>& dbOrder, vector<Products>& d
 		newOrder.idProduct = c.idProduct;
 		newOrder.quantity = c.quantity;
 		newOrder.price = db[index].price;
-		newOrder.status = 0; 
+		newOrder.status = 0;
 		dbOrder.push_back(newOrder);
 
-		cout << "Успішно! Замовлення створено, очікуйте підтвердження!" << endl;
+		total += newOrder.price * newOrder.quantity; // BR01: рахуємо суму замовлення
+		createdCount++;
+	}
+
+	if (createdCount == 0) {
+		cout << "Замовлення не створено" << endl;
+		return;
 	}
 
 	clearCart(dbCart, idUser);
+	cout << "Успішно! Замовлення створено, очікуйте підтвердження!" << endl;
 	cout << "Замовлення №" << numberOrder << " оформлено! Сума: " << priceToString(total) << " грн" << endl;
 }
+
 
 vector<string> orderToRow(const Order& o, const string& name) {
 	return {
@@ -365,6 +383,7 @@ void cancelOrder(vector<Order>& dbOrder, vector<Products>& db, int numberOrder) 
 		cout << "Нового замовлення з таким номером немає" << endl;
 	}
 }
+
 void showOrders(const vector<Order>& dbOrder, int idUser, const vector<Products>& db) {
 	if (idUser == -1) {
 		cout << "Ви не війшли в акаунт!!" << endl;
