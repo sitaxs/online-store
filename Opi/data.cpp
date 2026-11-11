@@ -62,7 +62,8 @@ int inputNumber(const string& text) {
 	do {
 		cout << text;
 		cin >> number;
-		isError = cin.fail();
+		// BR04: після числа в рядку не має бути інших символів (напр. "2abc")
+		isError = cin.fail() || cin.peek() != '\n';
 		if (isError) {
 			cin.clear();
 			cin.ignore((numeric_limits<streamsize>::max)(), '\n');
