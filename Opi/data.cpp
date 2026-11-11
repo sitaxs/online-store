@@ -16,9 +16,9 @@ vector<Account> dbAccount = {
 
 //Товари
 vector<Products> db = {
-	{1, "Футболка", 500.0 , 10},
-	{2, "Кофта", 600.0, 20},
-	{3, "Штани", 1000.0 , 30},
+	{1, "Футболка", 600.00 , 10},
+	{2, "Кофта", 1000.0, 20},
+	{3, "Штани", 4000.0 , 30},
 	{4, "Куртки", 3000.0 , 0},
 };
 
@@ -62,7 +62,8 @@ int inputNumber(const string& text) {
 	do {
 		cout << text;
 		cin >> number;
-		isError = cin.fail();
+		// BR04: після числа в рядку не має бути інших символів (напр. "2abc")
+		isError = cin.fail() || cin.peek() != '\n';
 		if (isError) {
 			cin.clear();
 			cin.ignore((numeric_limits<streamsize>::max)(), '\n');
